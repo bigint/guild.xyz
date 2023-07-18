@@ -180,7 +180,6 @@ const useConnect = (onSuccess?: () => void, isAutoConnect = false) => {
       } else {
         showErrorToast(toastError ?? rawError)
       }
-      showErrorToast(toastError ?? rawError)
     },
   })
 }
