@@ -14,11 +14,11 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react"
-import Button from "components/common/Button"
-import { Alert } from "components/common/Modal"
+import useConnectPlatform from "components/[guild]/JoinModal/hooks/useConnectPlatform"
 import useAccess from "components/[guild]/hooks/useAccess"
 import useUser from "components/[guild]/hooks/useUser"
-import useConnectPlatform from "components/[guild]/JoinModal/hooks/useConnectPlatform"
+import Button from "components/common/Button"
+import { Alert } from "components/common/Modal"
 import { motion } from "framer-motion"
 import useIsV2 from "hooks/useIsV2"
 import useToast from "hooks/useToast"

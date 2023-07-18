@@ -15,8 +15,8 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react"
 import { useWeb3React } from "@web3-react/core"
-import { SectionProps } from "components/common/Section"
 import useUser from "components/[guild]/hooks/useUser"
+import { SectionProps } from "components/common/Section"
 import { Question } from "phosphor-react"
 import platforms from "platforms/platforms"
 import { useMemo } from "react"
