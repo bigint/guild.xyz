@@ -1,5 +1,5 @@
-import useUser from "components/[guild]/hooks/useUser"
 import { getDelegateVaults } from "components/common/Layout/components/Account/components/delegate/getDelegateVaults"
+import useUser from "components/[guild]/hooks/useUser"
 import useSWRImmutable from "swr/immutable"
 
 const useDelegateVaults = () => {
