@@ -157,6 +157,12 @@ const platforms: Record<PlatformName, PlatformData> = {
         ).then((oauth_token) => ({ oauth_token } as any)),
     },
   },
+  TWITTER_V1: {
+    icon: TwitterLogo,
+    name: "Twitter",
+    colorScheme: "TWITTER",
+    gatedEntity: "account",
+  },
   GOOGLE: {
     icon: GoogleLogo,
     name: "Google Workspace",
