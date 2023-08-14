@@ -76,7 +76,8 @@ const handler: NextApiHandler = async (req, res) => {
   })
 
   if (!response.ok) {
-    res.status(400).json({ message: "Failed to generate Twitter request token" })
+    const message = await response.text()
+    res.status(400).json({ message })
     return
   }
 
