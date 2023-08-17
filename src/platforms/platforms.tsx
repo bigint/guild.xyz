@@ -9,7 +9,7 @@ import {
   TwitterLogo,
 } from "phosphor-react"
 import { ComponentType } from "react"
-import { GuildPlatform, PlatformName } from "types"
+import { GuildPlatform, OneOf, PlatformName } from "types"
 import fetcher from "utils/fetcher"
 import PlatformPreview from "./components/PlatformPreview"
 import ContractCallRewardCardButton from "./ContractCall/ContractCallRewardCardButton"
@@ -70,7 +70,18 @@ type PlatformData<
     skipSettings?: boolean
   }>
   PlatformPreview?: ComponentType<Record<string, never>>
-}
+} & OneOf<
+  {
+    asRewardRestriction: PlatformAsRewardRestrictions.NOT_APPLICABLE
+  },
+  {
+    asRewardRestriction: Exclude<
+      PlatformAsRewardRestrictions,
+      PlatformAsRewardRestrictions.NOT_APPLICABLE
+    >
+    shouldShowKeepAccessesModal: boolean
+  }
+>
 
 const platforms: Record<PlatformName, PlatformData> = {
   TELEGRAM: {
@@ -97,6 +108,7 @@ const platforms: Record<PlatformName, PlatformData> = {
       },
     },
     asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
+    shouldShowKeepAccessesModal: true,
     AddPlatformPanel: dynamic(
       () =>
         import(
@@ -126,6 +138,7 @@ const platforms: Record<PlatformName, PlatformData> = {
       },
     },
     asRewardRestriction: PlatformAsRewardRestrictions.MULTIPLE_ROLES,
+    shouldShowKeepAccessesModal: true,
     AddPlatformPanel: dynamic(
       () =>
         import(
@@ -157,6 +170,7 @@ const platforms: Record<PlatformName, PlatformData> = {
       },
     },
     asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
+    shouldShowKeepAccessesModal: true,
     AddPlatformPanel: dynamic(
       () =>
         import(
@@ -233,6 +247,7 @@ const platforms: Record<PlatformName, PlatformData> = {
       },
     },
     asRewardRestriction: PlatformAsRewardRestrictions.MULTIPLE_ROLES,
+    shouldShowKeepAccessesModal: true,
     AddPlatformPanel: dynamic(
       () =>
         import(
@@ -251,6 +266,7 @@ const platforms: Record<PlatformName, PlatformData> = {
     colorScheme: "purple",
     gatedEntity: "POAP",
     asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
+    shouldShowKeepAccessesModal: false,
     PlatformPreview: dynamic(() => import("platforms/components/PoapPreview"), {
       ssr: false,
       loading: () => <PlatformPreview isLoading={true} />,
@@ -264,6 +280,7 @@ const platforms: Record<PlatformName, PlatformData> = {
     cardPropsHook: useContractCallCardProps,
     cardButton: ContractCallRewardCardButton,
     asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
+    shouldShowKeepAccessesModal: false,
     AddPlatformPanel: null, // TODO: will add in another PR
     PlatformPreview: null, // TODO: will add in another PR
   },
