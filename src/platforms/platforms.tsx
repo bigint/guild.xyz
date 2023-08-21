@@ -188,6 +188,7 @@ const platforms: Record<PlatformName, PlatformData> = {
     name: "Twitter",
     colorScheme: "TWITTER",
     gatedEntity: "account",
+    asRewardRestriction: PlatformAsRewardRestrictions.NOT_APPLICABLE,
 
     oauth: {
       url: "https://twitter.com/i/oauth2/authorize",
@@ -220,13 +221,6 @@ const platforms: Record<PlatformName, PlatformData> = {
           `/api/twitter-request-token?callbackUrl=${encodeURIComponent(callbackUrl)}`
         ).then((oauth_token) => ({ oauth_token } as any)),
     },
-    asRewardRestriction: PlatformAsRewardRestrictions.NOT_APPLICABLE,
-  },
-  TWITTER_V1: {
-    icon: TwitterLogo,
-    name: "Twitter",
-    colorScheme: "TWITTER",
-    gatedEntity: "account",
     asRewardRestriction: PlatformAsRewardRestrictions.NOT_APPLICABLE,
   },
   GOOGLE: {
