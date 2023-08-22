@@ -236,48 +236,55 @@ const WalletSelectorModal = ({ isOpen, onClose, onOpen }: Props): JSX.Element =>
           </ModalBody>
           <ModalFooter mt="-4">
             {!isConnected ? (
-              <Text textAlign="center" colorScheme="gray" fontSize="sm" w="full">
-                New to Ethereum wallets?{" "}
-                <Link
-                  colorScheme="blue"
-                  href="https://ethereum.org/en/wallets/"
-                  isExternal
-                >
-                  Learn more
-                  <Icon as={ArrowSquareOut} mx="1" />
-                </Link>
-                <br />
-                By continuing, you agree to our{" "}
-                <Link
-                  href="/privacy-policy"
-                  fontWeight={"semibold"}
-                  onClick={onClose}
-                >
-                  Privacy Policy
-                </Link>
-                <br />
-                This site is protected by reCAPTCHA and the Google{" "}
-                <Link
-                  href="https://policies.google.com/privacy"
-                  isExternal
-                  fontWeight={"semibold"}
-                >
-                  Privacy Policy
-                </Link>{" "}
-                and{" "}
-                <Link
-                  href="https://policies.google.com/terms"
-                  isExternal
-                  fontWeight={"semibold"}
-                >
-                  Terms of Service
-                </Link>{" "}
-                apply.
-              </Text>
+              <Stack textAlign="center" fontSize="sm" w="full">
+                <Text colorScheme="gray">
+                  New to Ethereum wallets?{" "}
+                  <Link
+                    colorScheme="blue"
+                    href="https://ethereum.org/en/wallets/"
+                    isExternal
+                  >
+                    Learn more
+                    <Icon as={ArrowSquareOut} mx="1" />
+                  </Link>
+                </Text>
+
+                <Text colorScheme="gray">
+                  By continuing, you agree to our{" "}
+                  <Link
+                    href="/privacy-policy"
+                    fontWeight={"semibold"}
+                    onClick={onClose}
+                  >
+                    Privacy Policy
+                  </Link>
+                </Text>
+              </Stack>
             ) : (
-              <Text textAlign="center" w="full" colorScheme={"gray"}>
-                Signing the message doesn't cost any gas
-              </Text>
+              <Stack textAlign="center" fontSize="sm" w="full">
+                <Text colorScheme={"gray"}>
+                  Signing the message doesn't cost any gas
+                </Text>
+                <Text colorScheme="gray">
+                  This site is protected by reCAPTCHA, so the Google{" "}
+                  <Link
+                    href="https://policies.google.com/privacy"
+                    isExternal
+                    fontWeight={"semibold"}
+                  >
+                    Privacy Policy
+                  </Link>{" "}
+                  and{" "}
+                  <Link
+                    href="https://policies.google.com/terms"
+                    isExternal
+                    fontWeight={"semibold"}
+                  >
+                    Terms of Service
+                  </Link>{" "}
+                  apply
+                </Text>
+              </Stack>
             )}
           </ModalFooter>
         </ModalContent>

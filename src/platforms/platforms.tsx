@@ -9,9 +9,11 @@ import {
   TwitterLogo,
 } from "phosphor-react"
 import { ComponentType } from "react"
+import Photo from "static/icons/photo.svg"
 import { GuildPlatform, OneOf, PlatformName } from "types"
 import fetcher from "utils/fetcher"
 import PlatformPreview from "./components/PlatformPreview"
+import ContractCallCardMenu from "./ContractCall/ContractCallCardMenu"
 import ContractCallRewardCardButton from "./ContractCall/ContractCallRewardCardButton"
 import useContractCallCardProps from "./ContractCall/useContractCallCardProps"
 import DiscordCardMenu from "./Discord/DiscordCardMenu"
@@ -56,6 +58,11 @@ type PlatformData<
   cardMenuComponent?: (props) => JSX.Element
   cardWarningComponent?: (props) => JSX.Element
   cardButton?: (props) => JSX.Element
+  AddPlatformPanel?: ComponentType<{
+    onSuccess: () => void
+    skipSettings?: boolean
+  }>
+  PlatformPreview?: ComponentType<Record<string, never>>
 
   oauth?: {
     url: string
@@ -64,12 +71,6 @@ type PlatformData<
     // Probably only will be needed for Twitter v1. Once Twitter shuts it down, we will remove it, and this field can be removed as well
     oauthOptionsInitializer?: (redirectUri: string) => Promise<OAuthParams>
   }
-  asRewardRestriction: PlatformAsRewardRestrictions
-  AddPlatformPanel?: ComponentType<{
-    onSuccess: () => void
-    skipSettings?: boolean
-  }>
-  PlatformPreview?: ComponentType<Record<string, never>>
 } & OneOf<
   {
     asRewardRestriction: PlatformAsRewardRestrictions.NOT_APPLICABLE
@@ -91,6 +92,19 @@ const platforms: Record<PlatformName, PlatformData> = {
     gatedEntity: "group",
     cardPropsHook: useTelegramCardProps,
     cardMenuComponent: TelegramCardMenu,
+    asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
+    shouldShowKeepAccessesModal: true,
+    AddPlatformPanel: dynamic(
+      () =>
+        import(
+          "components/[guild]/RolePlatforms/components/AddRoleRewardModal/components/AddTelegramPanel"
+        ),
+      { ssr: false }
+    ),
+    PlatformPreview: dynamic(() => import("platforms/components/TelegramPreview"), {
+      ssr: false,
+      loading: () => <PlatformPreview isLoading={true} />,
+    }),
 
     oauth: {
       url: process.env.NEXT_PUBLIC_TELEGRAM_POPUP_URL,
@@ -107,19 +121,6 @@ const platforms: Record<PlatformName, PlatformData> = {
             : "https://guild.xyz",
       },
     },
-    asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
-    shouldShowKeepAccessesModal: true,
-    AddPlatformPanel: dynamic(
-      () =>
-        import(
-          "components/[guild]/RolePlatforms/components/AddRoleRewardModal/components/AddTelegramPanel"
-        ),
-      { ssr: false }
-    ),
-    PlatformPreview: dynamic(() => import("platforms/components/TelegramPreview"), {
-      ssr: false,
-      loading: () => <PlatformPreview isLoading={true} />,
-    }),
   },
   DISCORD: {
     icon: DiscordLogo,
@@ -129,14 +130,6 @@ const platforms: Record<PlatformName, PlatformData> = {
     cardPropsHook: useDiscordCardProps,
     cardSettingsComponent: DiscordCardSettings,
     cardMenuComponent: DiscordCardMenu,
-
-    oauth: {
-      url: "https://discord.com/api/oauth2/authorize",
-      params: {
-        client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
-        scope: "guilds identify guilds.members.read",
-      },
-    },
     asRewardRestriction: PlatformAsRewardRestrictions.MULTIPLE_ROLES,
     shouldShowKeepAccessesModal: true,
     AddPlatformPanel: dynamic(
@@ -150,6 +143,14 @@ const platforms: Record<PlatformName, PlatformData> = {
       ssr: false,
       loading: () => <PlatformPreview isLoading={true} />,
     }),
+
+    oauth: {
+      url: "https://discord.com/api/oauth2/authorize",
+      params: {
+        client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
+        scope: "guilds identify guilds.members.read",
+      },
+    },
   },
   GITHUB: {
     icon: GithubLogo,
@@ -158,17 +159,6 @@ const platforms: Record<PlatformName, PlatformData> = {
     gatedEntity: "repo",
     cardPropsHook: useGithubCardProps,
     cardMenuComponent: GithubCardMenu,
-
-    oauth: {
-      url: "https://github.com/login/oauth/authorize",
-      params: {
-        client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-        scope: {
-          creation: "repo,read:user",
-          membership: "repo:invite,read:user",
-        },
-      },
-    },
     asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
     shouldShowKeepAccessesModal: true,
     AddPlatformPanel: dynamic(
@@ -182,6 +172,17 @@ const platforms: Record<PlatformName, PlatformData> = {
       ssr: false,
       loading: () => <PlatformPreview isLoading={true} />,
     }),
+
+    oauth: {
+      url: "https://github.com/login/oauth/authorize",
+      params: {
+        client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
+        scope: {
+          creation: "repo,read:user",
+          membership: "repo:invite,read:user",
+        },
+      },
+    },
   },
   TWITTER: {
     icon: TwitterLogo,
@@ -206,6 +207,7 @@ const platforms: Record<PlatformName, PlatformData> = {
     name: "Twitter",
     colorScheme: "TWITTER",
     gatedEntity: "account",
+    asRewardRestriction: PlatformAsRewardRestrictions.NOT_APPLICABLE,
 
     oauth: {
       url: "https://api.twitter.com/oauth/authorize",
@@ -221,7 +223,6 @@ const platforms: Record<PlatformName, PlatformData> = {
           `/api/twitter-request-token?callbackUrl=${encodeURIComponent(callbackUrl)}`
         ).then((oauth_token) => ({ oauth_token } as any)),
     },
-    asRewardRestriction: PlatformAsRewardRestrictions.NOT_APPLICABLE,
   },
   GOOGLE: {
     icon: GoogleLogo,
@@ -232,14 +233,6 @@ const platforms: Record<PlatformName, PlatformData> = {
     cardSettingsComponent: GoogleCardSettings,
     cardMenuComponent: GoogleCardMenu,
     cardWarningComponent: GoogleCardWarning,
-
-    oauth: {
-      url: "https://accounts.google.com/o/oauth2/v2/auth",
-      params: {
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        scope: "openid email profile",
-      },
-    },
     asRewardRestriction: PlatformAsRewardRestrictions.MULTIPLE_ROLES,
     shouldShowKeepAccessesModal: true,
     AddPlatformPanel: dynamic(
@@ -253,6 +246,14 @@ const platforms: Record<PlatformName, PlatformData> = {
       ssr: false,
       loading: () => <PlatformPreview isLoading={true} />,
     }),
+
+    oauth: {
+      url: "https://accounts.google.com/o/oauth2/v2/auth",
+      params: {
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+        scope: "openid email profile",
+      },
+    },
   },
   POAP: {
     icon: null,
@@ -267,16 +268,29 @@ const platforms: Record<PlatformName, PlatformData> = {
     }),
   },
   CONTRACT_CALL: {
-    icon: null,
+    icon: Photo,
     name: "NFT",
     colorScheme: "cyan",
     gatedEntity: "",
     cardPropsHook: useContractCallCardProps,
     cardButton: ContractCallRewardCardButton,
+    cardMenuComponent: ContractCallCardMenu,
     asRewardRestriction: PlatformAsRewardRestrictions.SINGLE_ROLE,
     shouldShowKeepAccessesModal: false,
-    AddPlatformPanel: null, // TODO: will add in another PR
-    PlatformPreview: null, // TODO: will add in another PR
+    AddPlatformPanel: dynamic(
+      () =>
+        import(
+          "components/[guild]/RolePlatforms/components/AddRoleRewardModal/components/AddContractCallPanel"
+        ),
+      { ssr: false }
+    ),
+    PlatformPreview: dynamic(
+      () => import("platforms/components/ContractCallPreview"),
+      {
+        ssr: false,
+        loading: () => <PlatformPreview isLoading={true} />,
+      }
+    ),
   },
 }
 

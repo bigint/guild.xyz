@@ -198,7 +198,7 @@ const CreateGuildProvider = ({
       content: <CreateGuildIndex />,
     },
     {
-      title: "Choose template",
+      title: "Choose role template",
       label: capitalize(template?.toLowerCase() ?? ""),
       content: <ChooseTemplate />,
     },
